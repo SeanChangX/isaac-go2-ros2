@@ -79,7 +79,8 @@ fi
 # Auto run program
 if [ "${AUTO_RUN}" = "true" ]; then
     echo "Launching main program..."
-    python /home/ubuntu/isaac-go2-ros2/isaac_go2_ros2.py
+    cd /home/ubuntu/isaac-go2-ros2
+    python isaac_go2_ros2.py
 fi
 
 # If no command is provided, start an idle loop to keep the container alive
