@@ -36,6 +36,56 @@ conda activate env_isaaclab
 git clone https://github.com/Zhefan-Xu/isaac-go2-ros2.git
 ```
 
+## Docker Support (Recommended)
+
+For a simplified setup experience, we provide Docker support that eliminates the need for manual Isaac Sim, Isaac Lab, and ROS2 installation. This approach is particularly useful for users who want to get started quickly or avoid potential dependency conflicts.
+
+### Prerequisites
+- NVIDIA GPU and Docker support
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- NVIDIA Container Runtime for GPU support
+- X11 server for GUI support (usually pre-installed on Linux)
+
+### Quick Start
+Simply run the following command to test functionality - Docker will build automatically:
+```bash
+./isaac-launch.sh sim
+```
+
+### Docker Usage
+The `isaac-launch.sh` script provides convenient commands for managing the Docker environment:
+
+- `./isaac-launch.sh build` - Build the ROS workspace
+- `./isaac-launch.sh run` - Run Isaac Go2 simulation
+- `./isaac-launch.sh sim` - Launch Isaac Sim GUI only
+- `./isaac-launch.sh enter` - Enter the container for interactive use
+- `./isaac-launch.sh close` - Stop the container
+- `./isaac-launch.sh --command <cmd>` - Run a custom command in the container
+
+#### Run Complete Simulation:
+```bash
+# Run the complete simulation
+./isaac-launch.sh run
+```
+
+#### Interactive Development:
+```bash
+# Start the container and enter for development
+./isaac-launch.sh enter
+
+# Inside the container, you can run:
+python isaac_go2_ros2.py
+```
+
+### Environment Configuration
+The Docker setup includes:
+- **Isaac Sim 4.5.0** with Isaac Lab 2.1.1
+- **ROS2 Humble** with CycloneDDS
+- **GPU acceleration** support
+- **ROS_DOMAIN_ID=100** (configurable via environment variable)
+
+*Docker integration and isaac-launch.sh script developed by [SeanChangX](https://github.com/SeanChangX)*
+
 ## Run Unitree Go2 Simulation 
 To run the simulation, please use the following command:
 ```
