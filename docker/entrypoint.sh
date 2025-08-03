@@ -79,18 +79,7 @@ fi
 # Auto run program
 if [ "${AUTO_RUN}" = "true" ]; then
     echo "Launching main program..."
-    if [ -f "$ROS_WS/install/setup.bash" ]; then
-        source "$ROS_WS/install/setup.bash"
-    fi
-    
-    if [ -f "$ROS_WS/isaac_go2_ros2.py" ]; then
-        echo "Launching Isaac Go2 simulation..."
-        conda activate isaaclab 2>/dev/null || echo "Warning: Failed to activate isaaclab, using current environment"
-        source /isaac-sim/setup_conda_env.sh
-        /isaac-sim/python.sh isaac_go2_ros2.py
-    else
-        echo "No auto-run target found."
-    fi
+    python /home/ubuntu/isaac-go2-ros2/isaac_go2_ros2.py
 fi
 
 # If no command is provided, start an idle loop to keep the container alive
