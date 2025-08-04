@@ -4,7 +4,6 @@
 USER_ID=${LOCAL_USER_ID:-1000}
 GROUP_ID=${LOCAL_GROUP_ID:-1000}
 USERNAME=ubuntu
-ROS_WS=${ROS_WS:-~/isaac-go2-ros2}
 ROS_DISTRO=${ROS_DISTRO:-humble}
 
 # # Update ros user's UID and GID to match external user

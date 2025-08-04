@@ -29,7 +29,7 @@ services:
       - AUTO_RUN=${AUTO_RUN}
       - LOCAL_USER_ID=${LOCAL_USER_ID:-1000}
       - LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-1000}
-      - ROS_WS=/isaac-go2-ros2
+      - ROS_WS=/home/ubuntu/isaac-go2-ros2/ros2_ws
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       
