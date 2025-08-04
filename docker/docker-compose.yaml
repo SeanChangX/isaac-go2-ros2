@@ -7,7 +7,7 @@ services:
       args:
         ROS_DISTRO: humble
         USERNAME: ubuntu
-    image: isaac-go2-ros2:humble
+    image: seanchangx/isaac-go2-ros2:humble
     container_name: isaac-go2-ros2
     stdin_open: true
     tty: true
