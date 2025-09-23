@@ -1,0 +1,66 @@
+services:
+  isaac-go2-ros2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+      args:
+        ROS_DISTRO: humble
+        USERNAME: ubuntu
+    image: seanchangx/isaac-go2-ros2:humble
+    container_name: isaac-go2-ros2
+    stdin_open: true
+    tty: true
+    restart: "no"
+    network_mode: host
+    runtime: nvidia
+    environment:
+      # Isaac Sim configuration
+      - ACCEPT_EULA=Y
+      - PRIVACY_CONSENT=N
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - OMNI_KIT_ALLOW_ROOT=1
+      
+      # X11 forwarding for GUI
+      - DISPLAY=${DISPLAY}
+      
+      # ROS2 configuration
+      - AUTO_BUILD=${AUTO_BUILD}
+      - AUTO_RUN=${AUTO_RUN}
+      - LOCAL_USER_ID=${LOCAL_USER_ID:-1000}
+      - LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-1000}
+      - ROS_WS=/home/ubuntu/isaac-go2-ros2/ros2_ws
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      
+    volumes:
+      - ~/App/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw
+      - ~/App/isaac-sim/cache/ov:/root/.cache/ov:rw
+      - ~/App/isaac-sim/cache/pip:/root/.cache/pip:rw
+      - ~/App/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw
+      - ~/App/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw
+      - ~/App/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw
+      - ~/App/isaac-sim/data:/root/.local/share/ov/data:rw
+      - ~/App/isaac-sim/documents:/root/Documents:rw
+
+      # Mount local timezone into container.
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      # Mount X11 server
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+
+      - ../:/home/ubuntu/isaac-go2-ros2
+    
+    stop_grace_period: 3s
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+            
+    # entrypoint: ["/isaac-sim/isaac-sim.sh", "--allow-root"]
+    # entrypoint: ["/isaac-sim/isaac-sim.sh"]
+    # entrypoint: bash
+    entrypoint: ["/entrypoint.sh"]
+    command: ["${CUSTOM_COMMAND:-/bin/bash}"]

@@ -1,2 +1,24 @@
-__pycache__
-outputs
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# ROS
+build/
+install/
+log/
+*.bag
+*.db3
+
+# IDE
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+
+# Project outputs
+outputs/
+
+# Logs
+*.log
