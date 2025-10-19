@@ -40,7 +40,8 @@ services:
       - ~/App/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw
       - ~/App/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw
       - ~/App/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw
-      - ~/App/isaac-sim/data:/root/.local/share/ov/data:rw
+      # - ~/App/isaac-sim/data:/root/.local/share/ov/data:rw
+      - ~/App/isaac-sim/ov_local_share:/root/.local/share/ov:rw
       - ~/App/isaac-sim/documents:/root/Documents:rw
 
       # Mount local timezone into container.
