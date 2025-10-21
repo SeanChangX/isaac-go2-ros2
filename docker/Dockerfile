@@ -130,8 +130,8 @@ RUN /home/ubuntu/miniconda3/bin/conda config --remove channels defaults && \
     /home/ubuntu/miniconda3/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
     /home/ubuntu/miniconda3/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 
-# Clone IsaacLab repository and create symbolic link
-RUN git clone https://github.com/isaac-sim/IsaacLab.git /home/ubuntu/IsaacLab && \
+# Clone IsaacLab repository at release/2.1.1 and create symbolic link
+RUN git clone --depth 1 --branch v2.1.1 https://github.com/isaac-sim/IsaacLab.git /home/ubuntu/IsaacLab && \
     cd /home/ubuntu/IsaacLab && \
     ln -s /isaac-sim _isaac_sim && \
     ./isaaclab.sh --conda isaaclab

@@ -23,7 +23,7 @@ def create_obstacle_sparse_env():
         terrain_generator=TerrainGeneratorCfg(
             seed=0,
             size=(50, 50),
-            color_scheme="height",
+            color_scheme="none",
             sub_terrains={"t1": HfUniformDiscreteObstaclesTerrainCfg(
                 seed=0,
                 size=(50, 50),
@@ -48,7 +48,7 @@ def create_obstacle_medium_env():
         terrain_generator=TerrainGeneratorCfg(
             seed=0,
             size=(50, 50),
-            color_scheme="height",
+            color_scheme="none",
             sub_terrains={"t1": HfUniformDiscreteObstaclesTerrainCfg(
                 seed=0,
                 size=(50, 50),
@@ -74,7 +74,7 @@ def create_obstacle_dense_env():
         terrain_generator=TerrainGeneratorCfg(
             seed=0,
             size=(50, 50),
-            color_scheme="height",
+            color_scheme="none",
             sub_terrains={"t1": HfUniformDiscreteObstaclesTerrainCfg(
                 seed=0,
                 size=(50, 50),
