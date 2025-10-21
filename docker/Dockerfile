@@ -72,20 +72,28 @@ RUN sudo apt-get update && sudo apt-get upgrade -y \
     ros-${ROS_DISTRO}-foxglove-bridge \
     ros-${ROS_DISTRO}-cv-bridge \
     ros-${ROS_DISTRO}-ament-cmake \
-    python3-colcon-common-extensions
-
+    python3-colcon-common-extensions \
+#
 # Additional ROS2 packages (commented out to reduce build time and image size)
 # Uncomment as needed for your specific use case:
-# ros-${ROS_DISTRO}-nav2-msgs \
-# ros-${ROS_DISTRO}-nav2-util \
-# ros-${ROS_DISTRO}-navigation2 \
-# ros-${ROS_DISTRO}-nav2-bringup \
-# ros-${ROS_DISTRO}-turtlebot3* \
-# ros-${ROS_DISTRO}-urdf-launch \
-# ros-${ROS_DISTRO}-joint-state-publisher \
-# ros-${ROS_DISTRO}-joint-state-publisher-gui \
-# ros-${ROS_DISTRO}-behaviortree-cpp \
-# ros-${ROS_DISTRO}-generate-parameter-library
+#
+    ros-${ROS_DISTRO}-teleop-twist-keyboard \
+    # ros-${ROS_DISTRO}-nav2-msgs \
+    # ros-${ROS_DISTRO}-nav2-util \
+    # ros-${ROS_DISTRO}-navigation2 \
+    # ros-${ROS_DISTRO}-nav2-bringup \
+    # ros-${ROS_DISTRO}-turtlebot3* \
+    # ros-${ROS_DISTRO}-urdf-launch \
+    # ros-${ROS_DISTRO}-joint-state-publisher \
+    # ros-${ROS_DISTRO}-joint-state-publisher-gui \
+    # ros-${ROS_DISTRO}-behaviortree-cpp \
+    # ros-${ROS_DISTRO}-generate-parameter-library \
+#
+# Isaac Sim Documentation recommended packages
+# reference: https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_ros.html
+#
+    ros-humble-vision-msgs \
+    ros-humble-ackermann-msgs
 
 ######################################################################
 # - Tools Installation stage
@@ -132,6 +140,9 @@ RUN git clone https://github.com/isaac-sim/IsaacLab.git /home/ubuntu/IsaacLab &&
 RUN sudo chown -R ubuntu:ubuntu /isaac-sim
 RUN cd /home/ubuntu/IsaacLab && \
     bash -c "source /home/ubuntu/miniconda3/bin/activate && conda activate isaaclab && ./isaaclab.sh --install"
+
+# Install PyTorch using Isaac Sim's Python environment
+RUN /isaac-sim/python.sh -m pip install --no-cache-dir torch torchvision torchaudio
 
 RUN sudo apt-get update && sudo apt-get dist-upgrade -y \
     && sudo apt-get autoremove -y \

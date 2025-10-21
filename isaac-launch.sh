@@ -87,7 +87,11 @@ case $ACTION in
         export AUTO_BUILD=false AUTO_RUN=false
         echo "Launching Isaac Sim GUI..."
         docker compose up -d
-        docker compose exec isaac-go2-ros2 bash -c "/isaac-sim/isaac-sim.sh"
+        # docker compose exec isaac-go2-ros2 bash -c "/isaac-sim/isaac-sim.sh"
+        docker compose exec \
+            -e RMW_IMPLEMENTATION=rmw_cyclonedds_cpp \
+            -e LD_LIBRARY_PATH="/opt/ros/humble/lib:/isaac-sim/exts/isaacsim.ros2.bridge/humble/lib:${LD_LIBRARY_PATH}" \
+            isaac-go2-ros2 bash -c "/isaac-sim/isaac-sim.sh --enable isaacsim.ros2.bridge"
         echo "Isaac Sim process exited. Stopping the container..."
         docker compose down
         ;;
