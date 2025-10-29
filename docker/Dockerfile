@@ -36,38 +36,61 @@ RUN apt-get update \
 
 FROM user-setup AS ros2-setup
 
-USER ubuntu
+# Use root for all apt operations
+USER root
 WORKDIR /home/ubuntu
+ENV DEBIAN_FRONTEND=noninteractive
 
 # ARG variables need to be redeclared in each stage
 ARG ROS_DISTRO=humble
 
-# Install ROS2 Humble
-RUN sudo apt-get update && sudo apt-get install -y \
+# Fix base image APT conflicts (deb.sury.org brotli issue)
+RUN set -e \
+    && rm -f /etc/apt/sources.list.d/*sury* /etc/apt/sources.list.d/php* 2>/dev/null || true \
+    && sed -i '/deb\.sury\.org/d' /etc/apt/sources.list || true \
+    && apt-get update \
+    && printf "Package: *\nPin: release n=jammy\nPin-Priority: 700\n" > /etc/apt/preferences.d/pin-jammy
+
+# Install locale, repo and prerequisites
+RUN apt-get install -y --no-install-recommends \
     locales \
     software-properties-common \
     curl \
     gnupg \
     lsb-release \
-    && sudo locale-gen en_US en_US.UTF-8 \
-    && sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 \
-    && sudo add-apt-repository universe \
-    && sudo rm -rf /var/lib/apt/lists/*
+ && locale-gen en_US en_US.UTF-8 \
+ && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 \
+ && add-apt-repository universe \
+ && rm -rf /var/lib/apt/lists/*
 ENV LANG=en_US.UTF-8
 
-# Add ROS2 repository
+# Add ROS2 official repository
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /tmp/ros-archive-keyring.gpg \
-    && sudo mv /tmp/ros-archive-keyring.gpg /usr/share/keyrings/ros-archive-keyring.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+    && mv /tmp/ros-archive-keyring.gpg /usr/share/keyrings/ros-archive-keyring.gpg \
+    && sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+       http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros2.list'
 
-# Set timezone non-interactively
-ENV DEBIAN_FRONTEND=noninteractive
-RUN sudo ln -fs /usr/share/zoneinfo/UTC /etc/localtime
+# Install RViz dependencies (fix freetype/fontconfig & brotli conflict)
+RUN set -e \
+ && apt-mark unhold libbrotli1 || true \
+ && apt-get purge -y 'libbrotli*' || true \
+ && rm -f /etc/apt/sources.list.d/*sury* /etc/apt/sources.list.d/php* 2>/dev/null || true \
+ && sed -i '/deb\.sury\.org/d' /etc/apt/sources.list || true \
+ && rm -rf /var/lib/apt/lists/* \
+ && apt-get clean && apt-get update \
+ && apt-get install -y --no-install-recommends \
+      libbrotli1=1.0.9-2build6 \
+      libfreetype6-dev \
+      libfontconfig1-dev \
+      libxft-dev \
+      libxrender-dev \
+ && rm -rf /var/lib/apt/lists/*
 
 # Install ROS 2 packages (official Desktop Install method)
-RUN sudo apt-get update && sudo apt-get upgrade -y \
-    && sudo apt-get install -y \
-    ros-${ROS_DISTRO}-ros-base \
+RUN apt-get update && apt-get upgrade -y \
+ && apt-get install -y --no-install-recommends \
+    ros-${ROS_DISTRO}-desktop \
+    # ros-${ROS_DISTRO}-ros-base \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     ros-${ROS_DISTRO}-foxglove-bridge \
     ros-${ROS_DISTRO}-cv-bridge \
@@ -93,7 +116,15 @@ RUN sudo apt-get update && sudo apt-get upgrade -y \
 # reference: https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_ros.html
 #
     ros-humble-vision-msgs \
-    ros-humble-ackermann-msgs
+    ros-humble-ackermann-msgs \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
+USER ubuntu
+WORKDIR /home/ubuntu
+
+ENV ROS_DISTRO=${ROS_DISTRO}
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 ######################################################################
 # - Tools Installation stage
